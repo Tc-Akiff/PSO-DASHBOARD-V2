@@ -1125,6 +1125,35 @@
         }
 
         /**
+         * Handle Login as System Administrator (Super Admin)
+         */
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const adminId = document.getElementById('loginAdminId').value.trim();
+            const adminPass = document.getElementById('loginAdminPass').value.trim();
+
+            if (adminPass !== 'admin123') {
+                showNotification("Kata laluan pentadbir tidak sah! (Demo: admin123)", "error");
+                return;
+            }
+
+            authState = {
+                role: 'admin',
+                deptId: null,
+                deptName: 'Pentadbir Sistem',
+                userName: adminId || 'Pentadbir Sistem'
+            };
+
+            closeModal('loginModal');
+            renderAuthUI();
+            renderOfficialUnitsGrid();
+            renderKpiTable();
+            navigateToView('dashboard');
+
+            showNotification(`Selamat Datang, ${authState.userName}! Akses Pentadbir Sistem (Super Admin) aktif.`);
+        }
+
+        /**
          * Function to open and render the Direct Department Portal
          */
         function openDeptPortal(deptId) {
@@ -1390,6 +1419,97 @@
             pillars: defaultPillars,
             kpis: defaultKpis
         };
+
+        function renderPillars() {
+            const container = document.getElementById('pillarCardsDeck');
+            if (!container) return;
+            container.innerHTML = state.pillars.map((p, idx) => `
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:border-penang-primary transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black bg-blue-100 text-penang-primary">${p.code}</span>
+                            <span class="text-xs font-black ${p.achievement >= 85 ? 'text-emerald-600' : 'text-amber-600'}">${p.achievement}%</span>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-xs sm:text-sm mb-2">${p.name}</h3>
+                        <p class="text-[11px] text-slate-500">Memacu kecemerlangan pelaksanaan strategik organisasi negeri.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="bg-penang-primary h-2 rounded-full" style="width: ${p.achievement}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projectsCardsDeck');
+            if (!container) return;
+            const sampleProjects = [
+                { name: 'Sistem Pengurusan Strategik Pintar (e-PSO)', dept: 'BTMKN', progress: 92, status: 'Fasa Akhir' },
+                { name: 'Program Pengukuhan Integriti Penjawat Awam', dept: 'INTEGRITI', progress: 85, status: 'Sedang Berjalan' },
+                { name: 'Transformasi Pendigitalan Perkhidmatan PBT', dept: 'BKT', progress: 68, status: 'Perlu Perhatian' },
+                { name: 'Pelan Keselamatan & Kesiapsiagaan Bencana', dept: 'BENCANA', progress: 80, status: 'Sedang Berjalan' },
+                { name: 'Audit Pematuhan Sistem Pengurusan Kualiti', dept: 'AUDIT', progress: 95, status: 'Selesai' },
+                { name: 'Pemeliharaan Zon Warisan George Town', dept: 'WARISAN', progress: 78, status: 'Sedang Berjalan' }
+            ];
+            container.innerHTML = sampleProjects.map(proj => `
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">${proj.dept}</span>
+                        <span class="text-[10px] font-extrabold ${proj.progress >= 80 ? 'text-emerald-700' : 'text-amber-700'}">${proj.status}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-xs mb-2">${proj.name}</h4>
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+                        <span>Kemajuan Fizikal:</span>
+                        <strong class="text-slate-800">${proj.progress}%</strong>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div class="bg-penang-accent h-2 rounded-full" style="width: ${proj.progress}%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRisks() {
+            const tbody = document.getElementById('riskTableBody');
+            if (!tbody) return;
+            const sampleRisks = [
+                { code: 'RSK-01', desc: 'Kelewatan Integrasi Sistem Legasi', dept: 'BTMKN', matrix: '3 × 4 = 12', level: 'Sederhana', color: 'bg-amber-100 text-amber-800', mit: 'Penyelarasan API berperingkat' },
+                { code: 'RSK-02', desc: 'Kekurangan Latihan Khusus Kompetensi Digital', dept: 'BPSM', matrix: '2 × 3 = 6', level: 'Rendah', color: 'bg-emerald-100 text-emerald-800', mit: 'Bengkel intensif berkala' },
+                { code: 'RSK-03', desc: 'Kelewatan Tindakan Aduan SISPAA Agensi', dept: 'BKP', matrix: '4 × 4 = 16', level: 'Tinggi', color: 'bg-rose-100 text-rose-800', mit: 'Eskalasi automatik ke Pengurusan' }
+            ];
+            tbody.innerHTML = sampleRisks.map(r => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 text-center font-bold text-penang-primary">${r.code}</td>
+                    <td class="p-3 font-semibold text-slate-800">${r.desc}</td>
+                    <td class="p-3 font-medium text-slate-600">${r.dept}</td>
+                    <td class="p-3 text-center font-bold">${r.matrix}</td>
+                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.color}">${r.level}</span></td>
+                    <td class="p-3 text-slate-600">${r.mit}</td>
+                    <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800 font-bold">Aktif</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAuditLogs() {
+            const container = document.getElementById('auditLogsContainer');
+            if (!container) return;
+            const sampleLogs = [
+                { time: '12 Okt 2026, 15:45', user: 'admin.psukpp', act: 'Kemaskini data KPI-DUN-01 (Pencapaian: 98%)' },
+                { time: '12 Okt 2026, 14:20', user: 'Pegawai BTMKN', act: 'Menambah indikator baharu KPI-BTM-01' },
+                { time: '12 Okt 2026, 11:05', user: 'Pegawai INTEGRITI', act: 'Kemas kini status pematuhan ABMS ISO 37001' }
+            ];
+            container.innerHTML = sampleLogs.map(l => `
+                <div class="p-3 rounded-lg border border-slate-100 bg-slate-50 flex items-start justify-between text-xs">
+                    <div>
+                        <div class="font-bold text-slate-800">${l.act}</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">Dilakukan oleh: <strong class="text-penang-primary">${l.user}</strong></div>
+                    </div>
+                    <span class="text-[10px] text-slate-400 whitespace-nowrap ml-2">${l.time}</span>
+                </div>
+            `).join('');
+        }
 
         function renderOfficialUnitsGrid() {
             const container = document.getElementById('officialUnitsGrid');
@@ -1810,6 +1930,10 @@
             renderDepartmentRankings();
             renderUrgentKPIs();
             renderKpiTable();
+            renderPillars();
+            renderProjects();
+            renderRisks();
+            renderAuditLogs();
 
             // Chart 1: Bar Chart
             const ctxBar = document.getElementById('pillarBarChart');
