@@ -11,295 +11,1038 @@
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .sidebar-item-active { background-color: rgba(255, 255, 255, 0.15); border-left: 4px solid #C59B27; }
+        
+        .sidebar-active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #C59B27;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        .watermark-banner {
+            background: linear-gradient(90deg, #b45309 0%, #d97706 50%, #b45309 100%);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+            main { padding: 0 !important; }
+        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col selection:bg-amber-200 selection:text-amber-900">
 
-    <!-- TOPBAR -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-sm">
+    <!-- BANNER PERINGATAN PROTOKOL DATA CONTOH -->
+    <div class="watermark-banner text-white text-[11px] font-bold py-1 px-4 text-center tracking-wider shadow-sm no-print flex items-center justify-center gap-2">
+        <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+        <span>DATA CONTOH (DEMO) — BUKAN DOKUMEN RASMI PEJABAT SETIAUSAHA KERAJAAN NEGERI PULAU PINANG</span>
+    </div>
+
+    <!-- TOPBAR EKSEKUTIF -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-2.5 flex items-center justify-between shadow-xs no-print">
         <div class="flex items-center gap-3">
-            <button id="toggleSidebar" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100">
-                <i data-lucide="menu" class="w-6 h-6"></i>
+            <button id="btnToggleSidebar" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition" title="Menu Navigasi">
+                <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded border border-amber-300">
-                    DATA CONTOH — BUKAN DATA RASMI
-                </span>
+            <div class="flex items-center gap-3">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Coat_of_arms_of_Penang.svg" 
+                     alt="Jata Pulau Pinang" 
+                     class="h-9 w-auto drop-shadow-xs" />
+                <div class="hidden sm:block">
+                    <h1 class="text-xs font-bold text-slate-900 leading-tight">PEJABAT SETIAUSAHA KERAJAAN NEGERI PULAU PINANG</h1>
+                    <p class="text-[10px] text-slate-500 font-medium">Sistem Pemantauan Pelan Strategik Organisasi (SPS-PSO)</p>
+                </div>
             </div>
         </div>
 
-        <div class="flex items-center gap-3">
-            <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-medium hover:bg-slate-700 transition">
-                <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan
+        <div class="flex items-center gap-2.5">
+            <div class="hidden md:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg text-xs">
+                <i data-lucide="filter" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span class="text-slate-500 text-[11px]">Tahun:</span>
+                <select id="filterTahunGlobal" class="bg-transparent font-bold text-slate-700 outline-none cursor-pointer" onchange="kemaskiniDashboardData()">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+
+            <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold transition">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i> <span class="hidden sm:inline">Cetak Laporan</span>
             </button>
-            <button onclick="exportCSV()" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-900 text-white rounded-lg text-xs font-medium hover:bg-blue-800 transition">
-                <i data-lucide="download" class="w-4 h-4"></i> Eksport Data
+            
+            <button onclick="eksportDataCSV()" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#002B49] hover:bg-blue-900 text-white rounded-lg text-xs font-semibold transition">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> <span class="hidden sm:inline">Eksport CSV</span>
             </button>
-            <div class="h-6 w-px bg-slate-200"></div>
-            <div class="flex items-center gap-2 text-xs text-slate-600">
-                <i data-lucide="user-check" class="w-4 h-4 text-emerald-600"></i>
-                <span class="font-semibold">Pentadbir Sistem</span>
+
+            <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+
+            <div class="flex items-center gap-2 pl-1">
+                <div class="w-7 h-7 rounded-full bg-amber-500 text-slate-900 font-bold text-xs flex items-center justify-center border border-amber-300">
+                    PS
+                </div>
+                <div class="hidden xl:block text-left">
+                    <div class="text-[11px] font-bold text-slate-800 leading-none">Pentadbir Sistem</div>
+                    <div class="text-[9px] text-slate-500">Bahagian Khidmat Pengurusan</div>
+                </div>
             </div>
         </div>
     </header>
 
     <div class="flex flex-1 overflow-hidden">
         
-        <!-- SIDEBAR -->
-        <aside id="sidebar" class="w-72 bg-[#002B49] text-white flex flex-col transition-all duration-300 z-20 flex-shrink-0">
-            <!-- HEADER SIDEBAR (JATA NEGERI PULAU PINANG) -->
-            <div class="p-4 border-b border-slate-700 flex flex-col items-center text-center">
+        <!-- SIDEBAR NAVIGASI UTAMA -->
+        <aside id="sidebar" class="w-64 bg-[#002B49] text-white flex flex-col transition-all duration-300 z-20 flex-shrink-0 no-print">
+            <!-- HEAD SIDEBAR DENGAN JATA NEGERI -->
+            <div class="p-4 border-b border-slate-700/60 flex flex-col items-center text-center bg-[#00223a]">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Coat_of_arms_of_Penang.svg" 
                      alt="Jata Negeri Pulau Pinang" 
-                     class="h-20 w-auto mb-2 drop-shadow-md" />
-                <h1 class="text-xs font-bold text-amber-400 tracking-wider uppercase">Pejabat Setiausaha Kerajaan Negeri</h1>
-                <p class="text-[11px] text-slate-300 font-medium">Pulau Pinang</p>
+                     class="h-16 w-auto mb-2 drop-shadow-md" />
+                <h2 class="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider leading-tight">Pejabat Setiausaha Kerajaan</h2>
+                <p class="text-[10px] text-slate-300 font-medium">Negeri Pulau Pinang</p>
+                <div class="mt-2 px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded text-[9px] font-mono border border-amber-500/30">
+                    PELAN STRATEGIK 2021-2025
+                </div>
             </div>
 
-            <!-- MENU NAVIGASI -->
-            <nav class="flex-1 overflow-y-auto p-3 space-y-1 text-xs font-medium">
-                <a href="#dashboard" class="sidebar-item-active flex items-center gap-3 px-3 py-2.5 rounded-r-lg transition">
+            <!-- MENU ITEM -->
+            <nav class="flex-1 overflow-y-auto p-2 space-y-0.5 text-xs font-medium">
+                <button onclick="tukarModul('dashboard')" id="nav-dashboard" class="nav-btn sidebar-active w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg transition">
                     <i data-lucide="layout-dashboard" class="w-4 h-4 text-amber-400"></i> Dashboard Utama
-                </a>
-                <a href="#halatuju" class="flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 transition text-slate-200">
-                    <i data-lucide="compass" class="w-4 h-4"></i> Hala Tuju Strategik
-                </a>
-                <a href="#teras" class="flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 transition text-slate-200">
-                    <i data-lucide="layers" class="w-4 h-4"></i> Teras Strategik
-                </a>
-                <a href="#kpi" class="flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 transition text-slate-200">
-                    <i data-lucide="target" class="w-4 h-4"></i> Modul KPI & Pemantauan
-                </a>
-                <a href="#inisiatif" class="flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 transition text-slate-200">
-                    <i data-lucide="folder-kanban" class="w-4 h-4"></i> Program & Inisiatif
-                </a>
-                <a href="#risiko" class="flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 transition text-slate-200">
-                    <i data-lucide="shield-alert" class="w-4 h-4"></i> Pengurusan Risiko
-                </a>
-                <a href="#laporan" class="flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 transition text-slate-200">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Laporan & Analitik
-                </a>
+                </button>
+                <button onclick="tukarModul('halatuju')" id="nav-halatuju" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 text-slate-200 transition">
+                    <i data-lucide="compass" class="w-4 h-4 text-amber-400"></i> Hala Tuju Strategik
+                </button>
+                <button onclick="tukarModul('teras')" id="nav-teras" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 text-slate-200 transition">
+                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i> Teras & Objektif
+                </button>
+                <button onclick="tukarModul('kpi')" id="nav-kpi" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 text-slate-200 transition">
+                    <i data-lucide="target" class="w-4 h-4 text-amber-400"></i> Modul KPI Master
+                </button>
+                <button onclick="tukarModul('inisiatif')" id="nav-inisiatif" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 text-slate-200 transition">
+                    <i data-lucide="folder-kanban" class="w-4 h-4 text-amber-400"></i> Program & Inisiatif
+                </button>
+                <button onclick="tukarModul('risiko')" id="nav-risiko" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 text-slate-200 transition">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> Matriks Risiko 5x5
+                </button>
+                <button onclick="tukarModul('laporan')" id="nav-laporan" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 text-slate-200 transition">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-amber-400"></i> Laporan & Eksekutif
+                </button>
+                <button onclick="tukarModul('audit')" id="nav-audit" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-r-lg hover:bg-white/10 text-slate-200 transition">
+                    <i data-lucide="history" class="w-4 h-4 text-amber-400"></i> Jejak Audit (Data)
+                </button>
             </nav>
 
-            <div class="p-3 border-t border-slate-700/50 text-[10px] text-slate-400 text-center">
-                Pelan Strategik Organisasi (PSO) 2021-2025
+            <div class="p-3 border-t border-slate-700/50 text-[10px] text-slate-400 text-center bg-[#001e33]">
+                <p class="font-bold text-slate-300">PSUK PULAU PINANG © 2026</p>
+                <p class="text-[9px] text-slate-500">Sistem Pengurusan Strategik</p>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 overflow-y-auto p-6 space-y-6">
+        <!-- PUSAT KANDUNGAN UTAMA (MAIN CONTENT AREA) -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
 
-            <!-- PAGE TITLE HEADER -->
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between md:items-center gap-4">
+            <!-- HEADER TAJUK MODUL -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex flex-col lg:flex-row justify-between lg:items-center gap-4">
                 <div>
-                    <div class="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-1">Sistem Pengurusan Strategik Sektor Awam</div>
-                    <h2 class="text-xl font-bold text-slate-900">DASHBOARD PELAN STRATEGIK ORGANISASI</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Pejabat Setiausaha Kerajaan Negeri Pulau Pinang</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                            SEKTOR AWAM NEGERI
+                        </span>
+                        <span class="text-xs text-slate-400">•</span>
+                        <span class="text-xs font-semibold text-slate-500">PSUK Pulau Pinang</span>
+                    </div>
+                    <h2 id="modulTitle" class="text-xl md:text-2xl font-black text-slate-900 mt-1 tracking-tight">DASHBOARD UTAMA PRESTASI STRATEGIK</h2>
+                    <p id="modulSubtitle" class="text-xs text-slate-500 mt-0.5">Pemantauan Ringkasan Eksekutif & Status Pencapaian Petunjuk Prestasi Utama (KPI)</p>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs bg-slate-50 p-3 rounded-lg border border-slate-200">
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-50 p-3 rounded-lg border border-slate-200">
                     <div>
-                        <span class="text-slate-400 block text-[10px]">Tahun Pelaksanaan:</span>
-                        <span class="font-bold text-slate-700">2021 – 2025</span>
+                        <span class="text-slate-400 block text-[9px] uppercase font-bold">Tempoh Pelan</span>
+                        <span class="font-bold text-slate-800">2021 – 2025</span>
                     </div>
                     <div>
-                        <span class="text-slate-400 block text-[10px]">Tarikh Kemaskini:</span>
-                        <span class="font-bold text-slate-700">12 Okt 2026</span>
+                        <span class="text-slate-400 block text-[9px] uppercase font-bold">Kemaskini Terakhir</span>
+                        <span class="font-bold text-slate-800">12 Okt 2026</span>
                     </div>
                     <div>
-                        <span class="text-slate-400 block text-[10px]">Status Keseluruhan:</span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800">
-                            Cemerlang (84.2%)
+                        <span class="text-slate-400 block text-[9px] uppercase font-bold">Bahagian Utama</span>
+                        <span class="font-bold text-slate-800">Semua (12 Unit)</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[9px] uppercase font-bold">Indeks Prestasi</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800">
+                            84.2% (Cemerlang)
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- KAD STATISTIK (8 KAD UTAMA) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[11px] font-medium text-slate-500 block">Jumlah Teras</span>
-                    <span class="text-2xl font-bold text-slate-800">5</span>
+            <!-- MODUL 1: DASHBOARD UTAMA -->
+            <div id="modul-dashboard" class="modul-content space-y-6">
+                
+                <!-- KAD STATISTIK UTAMA (8 KAD) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs hover:border-slate-300 transition">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Jumlah Teras</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">5</div>
+                        <span class="text-[9px] text-slate-400">Teras Utama</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs hover:border-slate-300 transition">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Objektif</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">35</div>
+                        <span class="text-[9px] text-slate-400">Objektif Strategik</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs hover:border-slate-300 transition">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Inisiatif</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">24</div>
+                        <span class="text-[9px] text-slate-400">Program Utama</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs hover:border-slate-300 transition">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Jumlah KPI</span>
+                        <div class="text-2xl font-black text-slate-900 mt-1">147</div>
+                        <span class="text-[9px] text-slate-400">Petunjuk Prestasi</span>
+                    </div>
+
+                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-950 shadow-2xs">
+                        <span class="text-[10px] font-extrabold uppercase block text-emerald-700">KPI Capai</span>
+                        <div class="text-2xl font-black text-emerald-800 mt-1">113</div>
+                        <span class="text-[9px] text-emerald-600 font-semibold">≥ 100% Sasaran</span>
+                    </div>
+
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-950 shadow-2xs">
+                        <span class="text-[10px] font-extrabold uppercase block text-amber-700">Dalam Tindakan</span>
+                        <div class="text-2xl font-black text-amber-800 mt-1">26</div>
+                        <span class="text-[9px] text-amber-600 font-semibold">70% - 99% Sasaran</span>
+                    </div>
+
+                    <div class="bg-rose-50 p-3 rounded-xl border border-rose-200 text-rose-950 shadow-2xs">
+                        <span class="text-[10px] font-extrabold uppercase block text-rose-700">Tidak Capai</span>
+                        <div class="text-2xl font-black text-rose-800 mt-1">8</div>
+                        <span class="text-[9px] text-rose-600 font-semibold">&lt; 70% Sasaran</span>
+                    </div>
+
+                    <div class="bg-[#002B49] text-white p-3 rounded-xl shadow-2xs border border-blue-900">
+                        <span class="text-[10px] font-bold uppercase block text-amber-400">Prestasi PSO</span>
+                        <div class="text-2xl font-black text-white mt-1">84.2%</div>
+                        <span class="text-[9px] text-slate-300">Indeks Kumulatif</span>
+                    </div>
                 </div>
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[11px] font-medium text-slate-500 block">Objektif</span>
-                    <span class="text-2xl font-bold text-slate-800">35</span>
+
+                <!-- GRAF ANALITIK DUA SISI -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Graf Bar Pencapaian Teras -->
+                    <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900">Prestasi Pencapaian Mengikut Teras Strategik</h3>
+                                <p class="text-xs text-slate-500">Perbandingan Antara Sasaran Tahunan dengan Pencapaian Sebenar (%)</p>
+                            </div>
+                            <span class="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded">Kemaskini: Suku 3 2026</span>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="chartTeras"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Carta Donat Status KPI -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Taburan Status KPI Organisasi</h3>
+                            <p class="text-xs text-slate-500">Pecahan Keseluruhan 147 Indikator KPI</p>
+                        </div>
+                        <div class="h-56 my-2">
+                            <canvas id="chartDonutStatus"></canvas>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 text-center text-[10px] border-t border-slate-100 pt-3">
+                            <div><span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span> Capai: 76.8%</div>
+                            <div><span class="inline-block w-2 h-2 rounded-full bg-amber-500"></span> Amaran: 17.7%</div>
+                            <div><span class="inline-block w-2 h-2 rounded-full bg-rose-500"></span> Kritik: 5.5%</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[11px] font-medium text-slate-500 block">Inisiatif</span>
-                    <span class="text-2xl font-bold text-slate-800">10</span>
-                </div>
-                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[11px] font-medium text-slate-500 block">Jumlah KPI</span>
-                    <span class="text-2xl font-bold text-slate-800">147</span>
-                </div>
-                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-emerald-900">
-                    <span class="text-[11px] font-medium block">KPI Capai</span>
-                    <span class="text-2xl font-bold">113</span>
-                </div>
-                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-900">
-                    <span class="text-[11px] font-medium block">Dalam Tindakan</span>
-                    <span class="text-2xl font-bold">26</span>
-                </div>
-                <div class="bg-rose-50 p-3 rounded-xl border border-rose-200 text-rose-900">
-                    <span class="text-[11px] font-medium block">Belum Capai</span>
-                    <span class="text-2xl font-bold">8</span>
-                </div>
-                <div class="bg-blue-900 text-white p-3 rounded-xl shadow-sm">
-                    <span class="text-[11px] opacity-80 block">Pencapaian</span>
-                    <span class="text-2xl font-bold">84.2%</span>
+
+                <!-- SENARAI INTERVENSI KPI KRITIKAL & MERAH -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="p-1.5 bg-rose-100 text-rose-700 rounded-lg">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900">Senarai KPI Memerlukan Intervensi Pengurusan (Merah & Kuning)</h3>
+                                <p class="text-xs text-slate-500">KPI yang tidak mencapai sasaran atau memerlukan perhatian segera pihak pengurusan</p>
+                            </div>
+                        </div>
+                        <button onclick="tukarModul('kpi')" class="text-xs font-semibold text-blue-900 hover:underline">Lihat Semua KPI →</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left border-collapse">
+                            <thead class="bg-slate-50 text-slate-700 border-b border-slate-200 font-semibold">
+                                <tr>
+                                    <th class="p-2.5">Kod</th>
+                                    <th class="p-2.5">Nama KPI</th>
+                                    <th class="p-2.5">Bahagian</th>
+                                    <th class="p-2.5 text-center">Sasaran</th>
+                                    <th class="p-2.5 text-center">Sebenar</th>
+                                    <th class="p-2.5 text-center">Pencapaian</th>
+                                    <th class="p-2.5">Status</th>
+                                    <th class="p-2.5">Catatan Intervensi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-mono font-bold text-slate-700">KPI-T2-01</td>
+                                    <td class="p-2.5 font-medium text-slate-800">Kadar Perbelanjaan Pembangunan (DE) Negeri</td>
+                                    <td class="p-2.5">BPEN</td>
+                                    <td class="p-2.5 text-center">95.0%</td>
+                                    <td class="p-2.5 text-center font-bold">78.0%</td>
+                                    <td class="p-2.5 text-center font-bold text-amber-600">82.1%</td>
+                                    <td class="p-2.5"><span class="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-100 text-amber-800">DALAM TINDAKAN</span></td>
+                                    <td class="p-2.5 text-slate-600">Isu kelewatan kelulusan tapak tanah projek infrastruktur Pihak Berkuasa Tempatan.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-mono font-bold text-slate-700">KPI-T3-01</td>
+                                    <td class="p-2.5 font-medium text-slate-800">Peratus Penyelesaian Aduan Awam Dalam Masa 7 Hari</td>
+                                    <td class="p-2.5">Unit Integriti</td>
+                                    <td class="p-2.5 text-center">98.0%</td>
+                                    <td class="p-2.5 text-center font-bold">62.0%</td>
+                                    <td class="p-2.5 text-center font-bold text-rose-600">63.2%</td>
+                                    <td class="p-2.5"><span class="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-100 text-rose-800">TIDAK CAPAI</span></td>
+                                    <td class="p-2.5 text-slate-600">Peningkatan 40% aduan isu banjir kilat semasa musim tengkujuh Suku 2.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-mono font-bold text-slate-700">KPI-T4-03</td>
+                                    <td class="p-2.5 font-medium text-slate-800">Bilangan Hari Latihan Penjawat Awam (Min 7 Hari)</td>
+                                    <td class="p-2.5">BKP (BPSM)</td>
+                                    <td class="p-2.5 text-center">100%</td>
+                                    <td class="p-2.5 text-center font-bold">68.5%</td>
+                                    <td class="p-2.5 text-center font-bold text-rose-600">68.5%</td>
+                                    <td class="p-2.5"><span class="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-100 text-rose-800">TIDAK CAPAI</span></td>
+                                    <td class="p-2.5 text-slate-600">Kekangan peruntukan Suku 1; perancangan bengkel semula disedia Suku 4.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- GRAF ANALITIK -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Graf Bar Teras -->
-                <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center justify-between">
-                        <span>Pencapaian Prestasi Mengikut Teras Strategik</span>
-                        <span class="text-xs font-normal text-slate-500">Nilai Peratus (%)</span>
+            <!-- MODUL 2: HALA TUJU STRATEGIK -->
+            <div id="modul-halatuju" class="modul-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- VISI -->
+                    <div class="bg-gradient-to-br from-[#002B49] to-blue-950 text-white p-6 rounded-xl shadow-md border-l-8 border-amber-400">
+                        <div class="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider mb-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Visi Organisasi
+                        </div>
+                        <h3 class="text-lg font-extrabold leading-snug">
+                            "Menjadi Pentadbiran Perkhidmatan Awam Negeri Pulau Pinang yang Cemerlang, Berintegriti, Resilien dan Berteraskan Digital menjelang 2030."
+                        </h3>
+                    </div>
+
+                    <!-- MISI -->
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-xl shadow-md border-l-8 border-blue-500">
+                        <div class="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-wider mb-2">
+                            <i data-lucide="compass" class="w-4 h-4"></i> Misi Organisasi
+                        </div>
+                        <h3 class="text-lg font-extrabold leading-snug">
+                            "Memperkasa Penyampaian Perkhidmatan Awam Negeri secara Inklusif melalui Tadbir Urus Terbaik, Inovasi Teknologi dan Pembangunan Modal Insan Berkualiti."
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- NILAI TERAS (P.I.N.A.N.G) -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="award" class="w-4 h-4 text-amber-500"></i> Nilai Bersama Organisasi (P.I.N.A.N.G)
                     </h3>
-                    <div class="h-64">
-                        <canvas id="barChartTeras"></canvas>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-center">
+                            <span class="text-2xl font-black text-amber-700 block">P</span>
+                            <span class="text-xs font-bold text-slate-800">Profesional</span>
+                        </div>
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
+                            <span class="text-2xl font-black text-blue-800 block">I</span>
+                            <span class="text-xs font-bold text-slate-800">Integriti</span>
+                        </div>
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
+                            <span class="text-2xl font-black text-emerald-800 block">N</span>
+                            <span class="text-xs font-bold text-slate-800">Niat Murni</span>
+                        </div>
+                        <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-lg text-center">
+                            <span class="text-2xl font-black text-indigo-800 block">A</span>
+                            <span class="text-xs font-bold text-slate-800">Akauntabiliti</span>
+                        </div>
+                        <div class="p-3 bg-purple-50 border border-purple-200 rounded-lg text-center">
+                            <span class="text-2xl font-black text-purple-800 block">N</span>
+                            <span class="text-xs font-bold text-slate-800">Nusantara</span>
+                        </div>
+                        <div class="p-3 bg-teal-50 border border-teal-200 rounded-lg text-center">
+                            <span class="text-2xl font-black text-teal-800 block">G</span>
+                            <span class="text-xs font-bold text-slate-800">Gagah/Resilien</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Carta Donat Status KPI -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4">Taburan Status KPI</h3>
-                    <div class="h-64 flex items-center justify-center">
-                        <canvas id="donutChartStatus"></canvas>
+                <!-- RAJAH PENJAJARAN STRATEGI (STRATEGY CASCADE MAP) -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4">Peta Penjajaran Strategi Organisasi (Strategy Map)</h3>
+                    <div class="space-y-3 font-mono text-xs">
+                        <div class="p-3 bg-[#002B49] text-white rounded-lg text-center font-bold">
+                            VISI & MISI ORGANISASI
+                        </div>
+                        <div class="text-center text-slate-400">↓</div>
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
+                            <div class="p-2.5 bg-blue-100 border border-blue-300 text-blue-900 rounded font-bold text-center">Teras 1: Tadbir Urus</div>
+                            <div class="p-2.5 bg-emerald-100 border border-emerald-300 text-emerald-900 rounded font-bold text-center">Teras 2: Ekonomik</div>
+                            <div class="p-2.5 bg-amber-100 border border-amber-300 text-amber-900 rounded font-bold text-center">Teras 3: Penyampaian</div>
+                            <div class="p-2.5 bg-purple-100 border border-purple-300 text-purple-900 rounded font-bold text-center">Teras 4: Modal Insan</div>
+                            <div class="p-2.5 bg-teal-100 border border-teal-300 text-teal-900 rounded font-bold text-center">Teras 5: Digitalisasi</div>
+                        </div>
+                        <div class="text-center text-slate-400">↓</div>
+                        <div class="p-3 bg-slate-100 border border-slate-300 text-slate-800 rounded-lg text-center font-sans text-xs">
+                            35 OBJEKTIF STRATEGIK → 24 PROGRAM/INISIATIF → 147 PETUNJUK PRESTASI UTAMA (KPI)
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- JADUAL PEMANTAUAN KPI RINGKAS -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                    <h3 class="text-sm font-bold text-slate-800">Pemantauan KPI Utama</h3>
-                    <span class="text-xs text-slate-500">Menunjukkan 5 daripada 147 Rekod</span>
+            <!-- MODUL 3: TERAS STRATEGIK -->
+            <div id="modul-teras" class="modul-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- TERAS 1 -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-mono font-bold text-[10px] rounded">TERAS 1</span>
+                            <span class="text-xs font-extrabold text-emerald-600">Pencapaian: 92.0%</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 mb-1">Pemantapan Tadbir Urus & Integriti</h3>
+                        <p class="text-xs text-slate-500 mb-4">Memperkasa kecekapan organisasi melalui ketelusan, akauntabiliti dan pengurusan berintegriti.</p>
+                        <div class="border-t border-slate-100 pt-3 grid grid-cols-3 gap-2 text-center text-[11px]">
+                            <div><span class="text-slate-400 block text-[9px]">Objektif</span><b class="text-slate-800">7</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">Inisiatif</span><b class="text-slate-800">5</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">KPI</span><b class="text-slate-800">32</b></div>
+                        </div>
+                    </div>
+
+                    <!-- TERAS 2 -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-mono font-bold text-[10px] rounded">TERAS 2</span>
+                            <span class="text-xs font-extrabold text-amber-600">Pencapaian: 78.0%</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 mb-1">Pembangunan Sektor Pembangunan & Ekonomi</h3>
+                        <p class="text-xs text-slate-500 mb-4">Merapatkan jurang sosioekonomi dan mempercepat pelaksanaan projek impak tinggi.</p>
+                        <div class="border-t border-slate-100 pt-3 grid grid-cols-3 gap-2 text-center text-[11px]">
+                            <div><span class="text-slate-400 block text-[9px]">Objektif</span><b class="text-slate-800">8</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">Inisiatif</span><b class="text-slate-800">6</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">KPI</span><b class="text-slate-800">38</b></div>
+                        </div>
+                    </div>
+
+                    <!-- TERAS 3 -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-mono font-bold text-[10px] rounded">TERAS 3</span>
+                            <span class="text-xs font-extrabold text-emerald-600">Pencapaian: 88.0%</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 mb-1">Kecemerlangan Penyampaian Perkhidmatan</h3>
+                        <p class="text-xs text-slate-500 mb-4">Meningkatkan tahap kepuasan rakyat melalui saluran perkhidmatan awam pantas.</p>
+                        <div class="border-t border-slate-100 pt-3 grid grid-cols-3 gap-2 text-center text-[11px]">
+                            <div><span class="text-slate-400 block text-[9px]">Objektif</span><b class="text-slate-800">7</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">Inisiatif</span><b class="text-slate-800">4</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">KPI</span><b class="text-slate-800">28</b></div>
+                        </div>
+                    </div>
+
+                    <!-- TERAS 4 -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 bg-purple-100 text-purple-800 font-mono font-bold text-[10px] rounded">TERAS 4</span>
+                            <span class="text-xs font-extrabold text-emerald-600">Pencapaian: 85.0%</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 mb-1">Pembangunan Modal Insan Resilien</h3>
+                        <p class="text-xs text-slate-500 mb-4">Melahirkan penjawat awam yang berpengetahuan, berinovasi dan berkemahiran tinggi.</p>
+                        <div class="border-t border-slate-100 pt-3 grid grid-cols-3 gap-2 text-center text-[11px]">
+                            <div><span class="text-slate-400 block text-[9px]">Objektif</span><b class="text-slate-800">6</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">Inisiatif</span><b class="text-slate-800">4</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">KPI</span><b class="text-slate-800">25</b></div>
+                        </div>
+                    </div>
+
+                    <!-- TERAS 5 -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 bg-teal-100 text-teal-800 font-mono font-bold text-[10px] rounded">TERAS 5</span>
+                            <span class="text-xs font-extrabold text-emerald-600">Pencapaian: 90.0%</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 mb-1">Transformasi Digital & Inovasi ICT</h3>
+                        <p class="text-xs text-slate-500 mb-4">Memodenkan infrastruktur ICT Kerajaan Negeri ke arah Kerajaan Pintar (Smart State).</p>
+                        <div class="border-t border-slate-100 pt-3 grid grid-cols-3 gap-2 text-center text-[11px]">
+                            <div><span class="text-slate-400 block text-[9px]">Objektif</span><b class="text-slate-800">7</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">Inisiatif</span><b class="text-slate-800">5</b></div>
+                            <div><span class="text-slate-400 block text-[9px]">KPI</span><b class="text-slate-800">24</b></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs text-left border-collapse">
-                        <thead class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
-                            <tr>
-                                <th class="p-3">Kod KPI</th>
-                                <th class="p-3">Nama KPI</th>
-                                <th class="p-3">Pemilik/Bahagian</th>
-                                <th class="p-3">Sasaran</th>
-                                <th class="p-3">Pencapaian</th>
-                                <th class="p-3">Peratus</th>
-                                <th class="p-3">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr>
-                                <td class="p-3 font-mono font-medium">KPI-T1-01</td>
-                                <td class="p-3 font-medium text-slate-800">Indeks Kepuasan Pelanggan Awam Negeri</td>
-                                <td class="p-3">BKP (Bahagian Khidmat Pengurusan)</td>
-                                <td class="p-3">90%</td>
-                                <td class="p-3">92.5%</td>
-                                <td class="p-3 font-bold text-emerald-600">102.7%</td>
-                                <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800 font-semibold">Mencapai Sasaran</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-mono font-medium">KPI-T1-02</td>
-                                <td class="p-3 font-medium text-slate-800">Peratus Digitalisasi Perkhidmatan Teras SUK</td>
-                                <td class="p-3">BTM (Bahagian Teknologi Maklumat)</td>
-                                <td class="p-3">85%</td>
-                                <td class="p-3">88.0%</td>
-                                <td class="p-3 font-bold text-emerald-600">103.5%</td>
-                                <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800 font-semibold">Mencapai Sasaran</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-mono font-medium">KPI-T2-01</td>
-                                <td class="p-3 font-medium text-slate-800">Kadar Perbelanjaan Pembangunan (DE) Negeri</td>
-                                <td class="p-3">BPEN (Bahagian Perancang Ekonomi)</td>
-                                <td class="p-3">95%</td>
-                                <td class="p-3">78.0%</td>
-                                <td class="p-3 font-bold text-amber-600">82.1%</td>
-                                <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] bg-amber-100 text-amber-800 font-semibold">Dalam Tindakan</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-mono font-medium">KPI-T3-01</td>
-                                <td class="p-3 font-medium text-slate-800">Peratus Penyelesaian Aduan Awam Dalam Masa 7 Hari</td>
-                                <td class="p-3">BKP / Unit Integriti</td>
-                                <td class="p-3">98%</td>
-                                <td class="p-3">91.0%</td>
-                                <td class="p-3 font-bold text-rose-600">92.8%</td>
-                                <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] bg-rose-100 text-rose-800 font-semibold">Memerlukan Perhatian</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </div>
+
+            <!-- MODUL 4: MODUL KPI MASTER -->
+            <div id="modul-kpi" class="modul-content hidden space-y-6">
+                <!-- BAR PENAPIS BERSAMA BOTON ADD -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <input type="text" id="carianKPI" placeholder="Cari Kod/Nama KPI..." onkeyup="penapisKPITable()" class="px-3 py-1.5 border border-slate-300 rounded-lg w-48 lg:w-64 outline-none focus:border-blue-900" />
+                        
+                        <select id="penapisTeras" onchange="penapisKPITable()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg outline-none bg-white">
+                            <option value="">Semua Teras</option>
+                            <option value="Teras 1">Teras 1</option>
+                            <option value="Teras 2">Teras 2</option>
+                            <option value="Teras 3">Teras 3</option>
+                            <option value="Teras 4">Teras 4</option>
+                            <option value="Teras 5">Teras 5</option>
+                        </select>
+
+                        <select id="penapisStatus" onchange="penapisKPITable()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg outline-none bg-white">
+                            <option value="">Semua Status</option>
+                            <option value="CAPAI">Mencapai Sasaran</option>
+                            <option value="TINDAKAN">Dalam Tindakan</option>
+                            <option value="TIDAK">Tidak Mencapai Sasaran</option>
+                        </select>
+                    </div>
+
+                    <button onclick="bukaModalKPI()" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah KPI Baru
+                    </button>
+                </div>
+
+                <!-- JADUAL KPI INTERAKTIF -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table id="jadualKPIMaster" class="w-full text-xs text-left border-collapse">
+                            <thead class="bg-[#002B49] text-white font-semibold">
+                                <tr>
+                                    <th class="p-3">Kod</th>
+                                    <th class="p-3">Nama Petunjuk Prestasi Utama (KPI)</th>
+                                    <th class="p-3">Teras</th>
+                                    <th class="p-3">Bahagian</th>
+                                    <th class="p-3 text-center">Jenis Kaedah</th>
+                                    <th class="p-3 text-center">Sasaran</th>
+                                    <th class="p-3 text-center">Pencapaian</th>
+                                    <th class="p-3 text-center">Peratus (%)</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-center">Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-3 font-mono font-bold text-slate-800">KPI-T1-01</td>
+                                    <td class="p-3 font-medium text-slate-900">Indeks Kepuasan Pelanggan Awam Negeri</td>
+                                    <td class="p-3">Teras 1</td>
+                                    <td class="p-3">BKP</td>
+                                    <td class="p-3 text-center"><span class="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-mono">Tinggi Baik</span></td>
+                                    <td class="p-3 text-center font-semibold">90.0%</td>
+                                    <td class="p-3 text-center font-semibold">92.5%</td>
+                                    <td class="p-3 text-center font-black text-emerald-600">102.7%</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 text-emerald-800">MENCAPAI</span></td>
+                                    <td class="p-3 text-center">
+                                        <button onclick="editKPI('KPI-T1-01')" class="text-blue-700 hover:text-blue-900 font-bold">Kemas Kini</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-3 font-mono font-bold text-slate-800">KPI-T2-01</td>
+                                    <td class="p-3 font-medium text-slate-900">Kadar Perbelanjaan Pembangunan (DE) Negeri</td>
+                                    <td class="p-3">Teras 2</td>
+                                    <td class="p-3">BPEN</td>
+                                    <td class="p-3 text-center"><span class="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-mono">Tinggi Baik</span></td>
+                                    <td class="p-3 text-center font-semibold">95.0%</td>
+                                    <td class="p-3 text-center font-semibold">78.0%</td>
+                                    <td class="p-3 text-center font-black text-amber-600">82.1%</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-100 text-amber-800">TINDAKAN</span></td>
+                                    <td class="p-3 text-center">
+                                        <button onclick="editKPI('KPI-T2-01')" class="text-blue-700 hover:text-blue-900 font-bold">Kemas Kini</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-3 font-mono font-bold text-slate-800">KPI-T3-01</td>
+                                    <td class="p-3 font-medium text-slate-900">Peratus Penyelesaian Aduan Awam Dalam Masa 7 Hari</td>
+                                    <td class="p-3">Teras 3</td>
+                                    <td class="p-3">Integriti</td>
+                                    <td class="p-3 text-center"><span class="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-[10px] font-mono">Tinggi Baik</span></td>
+                                    <td class="p-3 text-center font-semibold">98.0%</td>
+                                    <td class="p-3 text-center font-semibold">62.0%</td>
+                                    <td class="p-3 text-center font-black text-rose-600">63.2%</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-100 text-rose-800">TIDAK CAPAI</span></td>
+                                    <td class="p-3 text-center">
+                                        <button onclick="editKPI('KPI-T3-01')" class="text-blue-700 hover:text-blue-900 font-bold">Kemas Kini</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="p-3 font-mono font-bold text-slate-800">KPI-T5-02</td>
+                                    <td class="p-3 font-medium text-slate-900">Kadar Gangguan Sistem Aplikasi Utama (Downtime)</td>
+                                    <td class="p-3">Teras 5</td>
+                                    <td class="p-3">BTM</td>
+                                    <td class="p-3 text-center"><span class="px-1.5 py-0.5 bg-purple-50 text-purple-700 rounded text-[10px] font-mono">Rendah Baik</span></td>
+                                    <td class="p-3 text-center font-semibold">&lt; 1.0%</td>
+                                    <td class="p-3 text-center font-semibold">0.4%</td>
+                                    <td class="p-3 text-center font-black text-emerald-600">100.0%</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-100 text-emerald-800">MENCAPAI</span></td>
+                                    <td class="p-3 text-center">
+                                        <button onclick="editKPI('KPI-T5-02')" class="text-blue-700 hover:text-blue-900 font-bold">Kemas Kini</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODUL 5: PROGRAM & INISIATIF -->
+            <div id="modul-inisiatif" class="modul-content hidden space-y-6">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4">Kemajuan Projek & Inisiatif Strategik</h3>
+                    <div class="space-y-4">
+                        <!-- INISIATIF 1 -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
+                                <div>
+                                    <span class="px-2 py-0.5 bg-blue-900 text-white font-mono rounded text-[10px]">INIT-01</span>
+                                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm inline ml-2">Pelaksanaan Portal Dashboard Eksekutif Smart-SUK Penang</h4>
+                                </div>
+                                <span class="text-xs font-bold text-emerald-700">Kemajuan Fizikal: 90%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mb-2">
+                                <div class="bg-emerald-600 h-full rounded-full" style="width: 90%;"></div>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-slate-600 pt-1">
+                                <div><b>Bahagian:</b> BTM</div>
+                                <div><b>Peruntukan:</b> RM 450,000</div>
+                                <div><b>Perbelanjaan:</b> RM 395,000</div>
+                                <div><b>Tarikh Tamat:</b> Disember 2026</div>
+                            </div>
+                        </div>
+
+                        <!-- INISIATIF 2 -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-2">
+                                <div>
+                                    <span class="px-2 py-0.5 bg-blue-900 text-white font-mono rounded text-[10px]">INIT-02</span>
+                                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm inline ml-2">Program Pengukuhan Integriti Penjawat Awam Negeri</h4>
+                                </div>
+                                <span class="text-xs font-bold text-amber-600">Kemajuan Fizikal: 65%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mb-2">
+                                <div class="bg-amber-500 h-full rounded-full" style="width: 65%;"></div>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-slate-600 pt-1">
+                                <div><b>Bahagian:</b> Unit Integriti</div>
+                                <div><b>Peruntukan:</b> RM 180,000</div>
+                                <div><b>Perbelanjaan:</b> RM 112,000</div>
+                                <div><b>Tarikh Tamat:</b> November 2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODUL 6: PENGURUSAN RISIKO 5x5 -->
+            <div id="modul-risiko" class="modul-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- MATRIKS RISIKO 5x5 -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                        <h3 class="text-sm font-bold text-slate-900 mb-3">Matriks Risiko Strategik 5 × 5</h3>
+                        <p class="text-xs text-slate-500 mb-4">Kebarangkalian (Sumbu Y) vs Impak (Sumbu X)</p>
+
+                        <div class="grid grid-cols-6 gap-1 text-[10px] font-bold text-center">
+                            <div></div>
+                            <div class="p-1 bg-slate-100">1</div>
+                            <div class="p-1 bg-slate-100">2</div>
+                            <div class="p-1 bg-slate-100">3</div>
+                            <div class="p-1 bg-slate-100">4</div>
+                            <div class="p-1 bg-slate-100">5</div>
+
+                            <div class="p-1 bg-slate-100 flex items-center justify-center">5</div>
+                            <div class="p-2 bg-amber-200">5</div>
+                            <div class="p-2 bg-amber-300">10</div>
+                            <div class="p-2 bg-rose-400 text-white">15</div>
+                            <div class="p-2 bg-rose-600 text-white font-black">20</div>
+                            <div class="p-2 bg-rose-800 text-white font-black">25</div>
+
+                            <div class="p-1 bg-slate-100 flex items-center justify-center">4</div>
+                            <div class="p-2 bg-emerald-200">4</div>
+                            <div class="p-2 bg-amber-200">8</div>
+                            <div class="p-2 bg-rose-300">12</div>
+                            <div class="p-2 bg-rose-500 text-white">16</div>
+                            <div class="p-2 bg-rose-700 text-white font-black">20</div>
+
+                            <div class="p-1 bg-slate-100 flex items-center justify-center">3</div>
+                            <div class="p-2 bg-emerald-100">3</div>
+                            <div class="p-2 bg-emerald-200">6</div>
+                            <div class="p-2 bg-amber-200">9</div>
+                            <div class="p-2 bg-rose-300">12</div>
+                            <div class="p-2 bg-rose-400 text-white">15</div>
+
+                            <div class="p-1 bg-slate-100 flex items-center justify-center">2</div>
+                            <div class="p-2 bg-emerald-100">2</div>
+                            <div class="p-2 bg-emerald-100">4</div>
+                            <div class="p-2 bg-emerald-200">6</div>
+                            <div class="p-2 bg-amber-200">8</div>
+                            <div class="p-2 bg-rose-300">10</div>
+
+                            <div class="p-1 bg-slate-100 flex items-center justify-center">1</div>
+                            <div class="p-2 bg-emerald-100">1</div>
+                            <div class="p-2 bg-emerald-100">2</div>
+                            <div class="p-2 bg-emerald-100">3</div>
+                            <div class="p-2 bg-emerald-200">4</div>
+                            <div class="p-2 bg-amber-200">5</div>
+                        </div>
+                    </div>
+
+                    <!-- DAFTAR RISIKO STRATEGIK -->
+                    <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                        <h3 class="text-sm font-bold text-slate-900 mb-4">Daftar Risiko Strategik Peringkat Organisasi</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-100 font-semibold text-slate-700 border-b">
+                                    <tr>
+                                        <th class="p-2">Kod</th>
+                                        <th class="p-2">Risiko</th>
+                                        <th class="p-2">Tahap</th>
+                                        <th class="p-2">Langkah Mitigasi</th>
+                                        <th class="p-2">Pemilik</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="p-2 font-mono font-bold">RSK-01</td>
+                                        <td class="p-2">Ancaman Keselamatan Siber dan Kebocoran Data</td>
+                                        <td class="p-2"><span class="px-2 py-0.5 bg-rose-600 text-white font-bold rounded text-[9px]">KRITIKAL (20)</span></td>
+                                        <td class="p-2">Pelaksanaan Firewall Generasi Baharu & Audit Keselamatan Siber Berkala.</td>
+                                        <td class="p-2">BTM</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 font-mono font-bold">RSK-02</td>
+                                        <td class="p-2">Kelewatan Perolehan Awam Projek Infrastruktur</td>
+                                        <td class="p-2"><span class="px-2 py-0.5 bg-amber-500 text-white font-bold rounded text-[9px]">TINGGI (12)</span></td>
+                                        <td class="p-2">Pemberdayaan Unit Jawatankuasa Spesifikasi & Perolehan Pantas.</td>
+                                        <td class="p-2">BPEN</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODUL 7: LAPORAN & EKSEKUTIF -->
+            <div id="modul-laporan" class="modul-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-base font-bold text-slate-900">Penjanaan Laporan Eksekutif Rasmi</h3>
+                        <button onclick="window.print()" class="px-3 py-1.5 bg-blue-900 text-white font-bold rounded-lg text-xs flex items-center gap-1.5">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan Penuh
+                        </button>
+                    </div>
+
+                    <!-- TEMPLATE LAPORAN CETAKAN RASMI -->
+                    <div class="border border-slate-300 p-8 rounded-lg bg-white space-y-6 font-sans">
+                        <div class="text-center border-b pb-4">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Coat_of_arms_of_Penang.svg" 
+                                 alt="Jata Penang" class="h-16 mx-auto mb-2" />
+                            <h2 class="text-sm font-bold uppercase tracking-wide">PEJABAT SETIAUSAHA KERAJAAN NEGERI PULAU PINANG</h2>
+                            <h3 class="text-base font-black text-slate-900">LAPORAN PRESTASI PELAN STRATEGIK ORGANISASI (PSO) 2021-2025</h3>
+                            <p class="text-xs text-slate-500">Tarikh Penjanaan Laporan: 12 Oktober 2026</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-xs">
+                            <div><b>Status Keseluruhan:</b> <span class="text-emerald-700 font-bold">84.2% (Cemerlang)</span></div>
+                            <div><b>Jumlah KPI Dipantau:</b> 147 KPI</div>
+                            <div><b>Penyelaras System:</b> Bahagian Khidmat Pengurusan</div>
+                            <div><b>Kelulusan:</b> Mesyuarat Pengurusan Tertinggi SUK</div>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <h4 class="font-bold text-xs mb-2">Ringkasan Prestasi Mengikut Teras Strategik:</h4>
+                            <ul class="text-xs space-y-1.5 list-disc pl-5">
+                                <li><b>Teras 1 (Tadbir Urus):</b> 92.0% - Cemerlang</li>
+                                <li><b>Teras 2 (Pembangunan):</b> 78.0% - Memerlukan Tindakan</li>
+                                <li><b>Teras 3 (Penyampaian):</b> 88.0% - Memuaskan</li>
+                                <li><b>Teras 4 (Modal Insan):</b> 85.0% - Memuaskan</li>
+                                <li><b>Teras 5 (Digital):</b> 90.0% - Cemerlang</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-t pt-8 grid grid-cols-2 gap-8 text-center text-xs">
+                            <div>
+                                <p class="mb-12">Disediakan Oleh:</p>
+                                <p class="font-bold border-b border-slate-400 pb-1 mx-8">Penyelaras Pelan Strategik</p>
+                                <p class="text-[10px] text-slate-500">PSUK Pulau Pinang</p>
+                            </div>
+                            <div>
+                                <p class="mb-12">Disahkan Oleh:</p>
+                                <p class="font-bold border-b border-slate-400 pb-1 mx-8">Setiausaha Kerajaan Negeri</p>
+                                <p class="text-[10px] text-slate-500">Pulau Pinang</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODUL 8: JEJAK AUDIT & PENGURUSAN DATA -->
+            <div id="modul-audit" class="modul-content hidden space-y-6">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4">Log Rekod Jejak Audit Perubahan Data (Audit Trail)</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-slate-100 text-slate-700 font-semibold border-b">
+                                <tr>
+                                    <th class="p-2.5">Masa & Tarikh</th>
+                                    <th class="p-2.5">Pengguna</th>
+                                    <th class="p-2.5">Peranan</th>
+                                    <th class="p-2.5">Tindakan</th>
+                                    <th class="p-2.5">Butiran Perubahan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-mono">
+                                <tr>
+                                    <td class="p-2.5 text-slate-500">2026-10-12 14:30:11</td>
+                                    <td class="p-2.5 font-sans font-bold">akiff.admin</td>
+                                    <td class="p-2.5 font-sans">Pentadbir System</td>
+                                    <td class="p-2.5"><span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded font-bold">UPDATE</span></td>
+                                    <td class="p-2.5 font-sans">Kemaskini Nilai Pencapaian KPI-T1-01 dari 90% kepada 92.5%</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 text-slate-500">2026-10-11 09:15:42</td>
+                                    <td class="p-2.5 font-sans font-bold">pemilik.bpeng</td>
+                                    <td class="p-2.5 font-sans">Pemilik KPI</td>
+                                    <td class="p-2.5"><span class="px-1.5 py-0.5 bg-amber-100 text-amber-800 rounded font-bold">CATATAN</span></td>
+                                    <td class="p-2.5 font-sans">Tambah ulasan intervensi pada KPI-T2-01</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
         </main>
     </div>
 
-    <!-- JAVASCRIPT FOR CHARTS & TOGGLE -->
+    <!-- MODAL FORM TAMBAH/EDIT KPI -->
+    <div id="modalKPI" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modalTitle" class="text-sm font-bold text-slate-900">Tambah KPI Baru</h3>
+                <button onclick="tutupModalKPI()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="formKPI" onsubmit="simpanKPI(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Kod KPI</label>
+                    <input type="text" id="inputKodKPI" required placeholder="Contoh: KPI-T1-05" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-blue-900" />
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nama Petunjuk Prestasi Utama (KPI)</label>
+                    <input type="text" id="inputNamaKPI" required placeholder="Contoh: Peratus Penyelesaian..." class="w-full px-3 py-2 border rounded-lg outline-none focus:border-blue-900" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Teras Strategik</label>
+                        <select id="inputTerasKPI" class="w-full px-3 py-2 border rounded-lg outline-none bg-white">
+                            <option value="Teras 1">Teras 1</option>
+                            <option value="Teras 2">Teras 2</option>
+                            <option value="Teras 3">Teras 3</option>
+                            <option value="Teras 4">Teras 4</option>
+                            <option value="Teras 5">Teras 5</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Bahagian Pemilik</label>
+                        <input type="text" id="inputBahagianKPI" required placeholder="BKP / BTM / BPEN" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-blue-900" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Sasaran (%)</label>
+                        <input type="number" step="0.1" id="inputSasaranKPI" required placeholder="90" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-blue-900" />
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Pencapaian Sebenar (%)</label>
+                        <input type="number" step="0.1" id="inputPencapaianKPI" required placeholder="85" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-blue-900" />
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 border-t pt-3 mt-2">
+                    <button type="button" onclick="tutupModalKPI()" class="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-[#002B49] text-white font-bold rounded-lg hover:bg-blue-900">Simpan KPI</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT UTAMA LOGIK DASHBOARD -->
     <script>
         // Init Lucide Icons
         lucide.createIcons();
 
-        // Toggle Sidebar Function
-        document.getElementById('toggleSidebar').addEventListener('click', function() {
+        // TOGGLE SIDEBAR
+        document.getElementById('btnToggleSidebar').addEventListener('click', function() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-ml-72');
+            sidebar.classList.toggle('-ml-64');
         });
 
-        // Export Function Placeholder
-        function exportCSV() {
-            alert("Memulakan eksport data Pelan Strategik ke format CSV...");
+        // NAVIGASI MODUL
+        function tukarModul(modulId) {
+            // Sembunyi semua modul
+            document.querySelectorAll('.modul-content').forEach(el => el.classList.add('hidden'));
+            
+            // Nyahkan aktif dari sidebar buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('sidebar-active'));
+
+            // Tunjuk modul dipilihan
+            const targetModul = document.getElementById('modul-' + modulId);
+            if(targetModul) targetModul.classList.remove('hidden');
+
+            // Aktifkan button nav
+            const targetNav = document.getElementById('nav-' + modulId);
+            if(targetNav) targetNav.classList.add('sidebar-active');
+
+            // Kemaskini Tajuk Header Modul
+            const titles = {
+                'dashboard': ['DASHBOARD UTAMA PRESTASI STRATEGIK', 'Pemantauan Ringkasan Eksekutif & Status Pencapaian KPI'],
+                'halatuju': ['HALA TUJU STRATEGIK ORGANISASI', 'Visi, Misi, Nilai P.I.N.A.N.G dan Peta Penjajaran Strategi'],
+                'teras': ['TERAS & OBJEKTIF STRATEGIK', 'Pecahan 5 Teras Utama dan 35 Objektif PSO'],
+                'kpi': ['MODUL PEMANTAUAN KPI MASTER', 'Pengurusan, Penapisan & Pengemaskinian 147 Indikator KPI'],
+                'inisiatif': ['PROGRAM & INISIATIF STRATEGIK', 'Pemantauan Kemajuan Fizikal dan Kewangan Projek'],
+                'risiko': ['PENGURUSAN RISIKO STRATEGIK (MATRIKS 5x5)', 'Penilaian Kebarangkalian vs Impak Risiko Organisasi'],
+                'laporan': ['PUSAT LAPORAN & EKSEKUTIF', 'Penjanaan Dokumentasi Rasmi dan Sedia Cetak'],
+                'audit': ['LOG JEJAK AUDIT & PENGURUSAN DATA', 'Sejarah Perubahan Rekod Data Pelan Strategik']
+            };
+
+            if(titles[modulId]) {
+                document.getElementById('modulTitle').innerText = titles[modulId][0];
+                document.getElementById('modulSubtitle').innerText = titles[modulId][1];
+            }
         }
 
-        // Initialize Bar Chart
-        const ctxBar = document.getElementById('barChartTeras').getContext('2d');
-        new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['Teras 1: Governance', 'Teras 2: Pembangunan', 'Teras 3: Penyampaian', 'Teras 4: Modal Insan', 'Teras 5: Digital'],
-                datasets: [{
-                    label: 'Pencapaian Sebenar (%)',
-                    data: [92, 78, 88, 85, 90],
-                    backgroundColor: '#002B49',
-                    borderRadius: 4
-                }, {
-                    label: 'Sasaran (%)',
-                    data: [90, 85, 90, 85, 85],
-                    backgroundColor: '#C59B27',
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, max: 100 }
-                }
-            }
-        });
+        // PENAPIS TABEL KPI MASTER
+        function penapisKPITable() {
+            const inputCarian = document.getElementById('carianKPI').value.toUpperCase();
+            const penapisTeras = document.getElementById('penapisTeras').value;
+            const penapisStatus = document.getElementById('penapisStatus').value;
+            const tr = document.querySelectorAll('#jadualKPIMaster tbody tr');
 
-        // Initialize Donut Chart
-        const ctxDonut = document.getElementById('donutChartStatus').getContext('2d');
-        new Chart(ctxDonut, {
-            type: 'doughnut',
-            data: {
-                labels: ['Mencapai Sasaran', 'Dalam Tindakan', 'Tidak Mencapai Sasaran'],
-                datasets: [{
-                    data: [113, 26, 8],
-                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
+            tr.forEach(row => {
+                const text = row.innerText.toUpperCase();
+                const terasText = row.children[2].innerText;
+                const statusText = row.children[8].innerText;
+
+                const matchCarian = text.indexOf(inputCarian) > -1;
+                const matchTeras = penapisTeras === "" || terasText.includes(penapisTeras);
+                const matchStatus = penapisStatus === "" || statusText.includes(penapisStatus);
+
+                if (matchCarian && matchTeras && matchStatus) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
                 }
-            }
+            });
+        }
+
+        // MODAL FUNCTIONS
+        function bukaModalKPI() {
+            document.getElementById('modalTitle').innerText = "Tambah KPI Baru";
+            document.getElementById('formKPI').reset();
+            document.getElementById('modalKPI').classList.remove('hidden');
+        }
+
+        function editKPI(kod) {
+            document.getElementById('modalTitle').innerText = "Kemas Kini KPI: " + kod;
+            document.getElementById('inputKodKPI').value = kod;
+            document.getElementById('modalKPI').classList.remove('hidden');
+        }
+
+        function tutupModalKPI() {
+            document.getElementById('modalKPI').classList.add('hidden');
+        }
+
+        function simpanKPI(e) {
+            e.preventDefault();
+            alert("Rekod KPI telah berjaya disimpan ke dalam pangkalan data!");
+            tutupModalKPI();
+        }
+
+        // EKSPORT CSV
+        function eksportDataCSV() {
+            const csvContent = "data:text/csv;charset=utf-8,Kod KPI,Nama KPI,Teras,Bahagian,Sasaran,Pencapaian,Status\nKPI-T1-01,Indeks Kepuasan Pelanggan,Teras 1,BKP,90%,92.5%,MENCAPAI\nKPI-T2-01,Kadar DE Negeri,Teras 2,BPEN,95%,78.0%,DALAM TINDAKAN";
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Laporan_PSO_SUK_Penang_2026.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // INIT GRAF CHART.JS
+        window.addEventListener('DOMContentLoaded', () => {
+            // Graf Bar Teras
+            const ctxBar = document.getElementById('chartTeras').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Teras 1 (Governance)', 'Teras 2 (Pembangunan)', 'Teras 3 (Penyampaian)', 'Teras 4 (Modal Insan)', 'Teras 5 (Digital)'],
+                    datasets: [
+                        {
+                            label: 'Pencapaian Sebenar (%)',
+                            data: [92.0, 78.0, 88.0, 85.0, 90.0],
+                            backgroundColor: '#002B49',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Sasaran Tahunan (%)',
+                            data: [90.0, 85.0, 90.0, 85.0, 85.0],
+                            backgroundColor: '#C59B27',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+
+            // Graf Donut Status KPI
+            const ctxDonut = document.getElementById('chartDonutStatus').getContext('2d');
+            new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Mencapai Sasaran', 'Dalam Tindakan', 'Tidak Mencapai'],
+                    datasets: [{
+                        data: [113, 26, 8],
+                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
         });
     </script>
 </body>
