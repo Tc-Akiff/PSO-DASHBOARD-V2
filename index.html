@@ -56,22 +56,6 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col bg-slate-100 text-slate-800">
 
-    <!-- TOP PROTOCOL BANNER -->
-    <aside class="no-print bg-amber-500 text-slate-950 px-4 py-1.5 text-xs flex items-center justify-between font-bold shadow-xs">
-        <div class="flex items-center gap-2">
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-slate-950 text-amber-300 uppercase tracking-wider font-extrabold">
-                <i class="fa-solid fa-triangle-exclamation mr-1 text-amber-400"></i> PROTOTAIP DEMO
-            </span>
-            <span class="text-[11px] font-semibold text-slate-900">
-                Sistem Pengurusan Strategik PSUKPP — Data berlabel <strong>DATA CONTOH (DEMO)</strong> bagi tujuan simulasi 14 Bahagian & Unit.
-            </span>
-        </div>
-        <div class="hidden md:flex items-center gap-3 text-[11px]">
-            <span id="systemClock"><i class="fa-regular fa-clock mr-1"></i> Memuatkan masa...</span>
-            <span class="bg-slate-900 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-mono"><i class="fa-solid fa-lock mr-1"></i> SECURE TLS</span>
-        </div>
-    </aside>
-
     <!-- TOP NAVIGATION BAR -->
     <header class="bg-gradient-to-r from-penang-blue via-[#063964] to-penang-primary text-white shadow-md border-b-2 border-penang-accent sticky top-0 z-40">
         <div class="max-w-[1920px] mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
@@ -117,15 +101,11 @@
                     </div>
 
                     <div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[9px] tracking-widest uppercase bg-penang-accent/25 text-amber-200 border border-penang-accent/50 px-1.5 py-0.5 rounded font-bold">KERAJAAN NEGERI PULAU PINANG</span>
-                            <span class="text-[10px] text-blue-200 hidden sm:inline">| 14 Bahagian & Unit</span>
-                        </div>
                         <h1 class="text-sm sm:text-base font-extrabold text-white tracking-tight leading-tight">
                             DASHBOARD PELAN STRATEGIK ORGANISASI
                         </h1>
-                        <p class="text-[11px] text-blue-100 font-medium tracking-wide">
-                            Pejabat Setiausaha Kerajaan Negeri Pulau Pinang (PSUKPP)
+                        <p class="text-xs text-blue-100 font-medium tracking-wide">
+                            Pejabat Setiausaha Kerajaan Negeri Pulau Pinang
                         </p>
                     </div>
                 </div>
@@ -199,6 +179,9 @@
 
             <!-- Navigation Links -->
             <div class="flex-1 overflow-y-auto custom-scroll py-3 px-2 space-y-1">
+                <!-- BUTANG KHAS RUANG KERJA BAHAGIAN (MUNCUL AUTOMATIK BILA LOG MASUK) -->
+                <div id="sidebarDeptPortalSlot"></div>
+
                 <div class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Papan Utama</div>
                 
                 <button onclick="navigateToView('dashboard')" data-target="dashboard" class="nav-item sidebar-active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-white transition">
@@ -482,6 +465,134 @@
                 </div>
             </section>
 
+            <!-- VIEW BARU KHAS: PORTAL RUANG KERJA LANGSUNG (DIRECT WORKSPACE) BAHAGIAN / UNIT -->
+            <section id="view-dept-portal" class="content-view space-y-6 hidden">
+                <!-- EXECUTIVE BANNER BAHAGIAN -->
+                <div class="bg-gradient-to-r from-penang-blue via-[#0B4F8A] to-slate-900 rounded-2xl p-6 text-white shadow-xl border-2 border-penang-accent relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="flex items-center gap-4 text-center md:text-left">
+                            <div class="h-20 w-16 flex items-center justify-center flex-shrink-0 bg-white/10 p-2 rounded-xl border border-penang-accent/50 shadow-inner">
+                                <img src="jata.png" 
+                                     alt="Jata Pulau Pinang" 
+                                     class="h-full w-auto max-w-full object-contain drop-shadow-md"
+                                     onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                                <svg viewBox="0 0 100 135" class="w-full h-full drop-shadow-md hidden" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M50 4 V32" stroke="#451A03" stroke-width="2.5"/>
+                                    <ellipse cx="50" cy="8" rx="14" ry="5" fill="#15803D"/>
+                                    <ellipse cx="50" cy="32" rx="16" ry="4" fill="#047857"/>
+                                    <path d="M50 35 C82 35, 96 48, 96 72 C96 108, 50 124, 50 124 C50 124, 4 108, 4 72 C4 48, 18 35, 50 35 Z" fill="#0B4F8A" stroke="#C59B27" stroke-width="3"/>
+                                    <path d="M7 72 C7 50, 20 38, 50 38 C80 38, 93 50, 93 72 L7 72 Z" fill="#FACC15"/>
+                                    <path d="M50 44 V72" stroke="#1E293B" stroke-width="3"/>
+                                    <path d="M22 72 L50 48 L78 72" stroke="#1E293B" stroke-width="2.5"/>
+                                    <path d="M7 72 C7 102, 50 121, 50 121 C50 121, 93 102, 93 72 Z" fill="#0284C7"/>
+                                    <path d="M12 80 Q30 75, 50 80 T88 80" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-penang-accent text-slate-950 font-black text-[11px] uppercase tracking-wider mb-2 shadow-xs">
+                                    <i class="fa-solid fa-building-circle-check"></i> Ruang Kerja Rasmi Anda
+                                </div>
+                                <h2 id="portalDeptFullName" class="text-lg sm:text-2xl font-black text-white leading-tight">
+                                    Nama Bahagian
+                                </h2>
+                                <p class="text-xs text-blue-100 mt-1">
+                                    Pusat Pengurusan Petunjuk Prestasi Utama (KPI) & Kemas Kini Data Bahagian
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Tindakan Pantas & Skor Bahagian -->
+                        <div class="flex flex-col sm:flex-row items-center gap-4 bg-black/25 backdrop-blur-md p-4 rounded-xl border border-white/15">
+                            <div class="text-center sm:text-right">
+                                <span class="text-[10px] uppercase font-bold text-slate-300 block">Indeks Prestasi Bahagian</span>
+                                <div id="portalDeptScoreText" class="text-3xl font-black text-amber-300">0.0%</div>
+                                <span class="text-[10px] text-emerald-300 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>STATUS TERKINI</span>
+                            </div>
+                            <button onclick="checkAuthBeforeAddKpi()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-xs px-4 py-3 rounded-xl shadow-lg transition flex items-center gap-2 whitespace-nowrap">
+                                <i class="fa-solid fa-plus-circle text-base"></i> Tambah KPI Bahagian Ini
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 KAD PRESTASI KHUSUS BAHAGIAN INI -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between text-slate-500 mb-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider">Jumlah KPI Bahagian</span>
+                            <span class="p-2 rounded-lg bg-blue-50 text-penang-primary"><i class="fa-solid fa-list-check"></i></span>
+                        </div>
+                        <div class="text-2xl font-black text-slate-900" id="portalStatTotal">0</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Dipantau Bahagian Ini</div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-4 border-l-4 border-emerald-500 border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between text-slate-500 mb-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Mencapai Sasaran</span>
+                            <span class="p-2 rounded-lg bg-emerald-50 text-emerald-600"><i class="fa-solid fa-circle-check"></i></span>
+                        </div>
+                        <div class="text-2xl font-black text-emerald-600" id="portalStatSuccess">0</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Melepasi Sasaran</div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-4 border-l-4 border-amber-500 border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between text-slate-500 mb-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Perlu Perhatian</span>
+                            <span class="p-2 rounded-lg bg-amber-50 text-amber-600"><i class="fa-solid fa-clock"></i></span>
+                        </div>
+                        <div class="text-2xl font-black text-amber-600" id="portalStatWarning">0</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Varians Sederhana</div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-4 border-l-4 border-rose-500 border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between text-slate-500 mb-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-rose-800">Kritikal / Tidak Capai</span>
+                            <span class="p-2 rounded-lg bg-rose-50 text-rose-600"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                        </div>
+                        <div class="text-2xl font-black text-rose-600" id="portalStatDanger">0</div>
+                        <div class="text-[11px] text-slate-500 mt-1">Perlu Intervensi</div>
+                    </div>
+                </div>
+
+                <!-- JADUAL KPI KHAS (HANYA BAHAGIAN INI SAHAJA) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-table-list text-penang-primary"></i>
+                                Senarai Indikator KPI Bahagian Anda
+                            </h3>
+                            <p class="text-xs text-slate-500">Anda mempunyai kuasa penuh untuk menambah, mengemas kini dan menyemak rekod di bawah.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="checkAuthBeforeAddKpi()" class="bg-penang-primary hover:bg-blue-900 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-plus"></i> Tambah KPI
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900 text-white font-bold uppercase tracking-wider text-[11px]">
+                                <tr>
+                                    <th class="p-3 w-20 text-center">Kod</th>
+                                    <th class="p-3">Nama Petunjuk Prestasi (KPI)</th>
+                                    <th class="p-3 text-center w-20">Unit</th>
+                                    <th class="p-3 text-right w-24">Sasaran</th>
+                                    <th class="p-3 text-right w-24">Sebenar</th>
+                                    <th class="p-3 text-center w-28">Pencapaian (%)</th>
+                                    <th class="p-3 text-center w-28">Status</th>
+                                    <th class="p-3 text-center w-24">Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portalKpiTableBody" class="divide-y divide-slate-100 text-slate-700">
+                                <!-- Populated dynamically for this department only -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- VIEW 2: 14 BAHAGIAN & UNIT PSUKPP (DARI GAMBAR RASMI) -->
             <section id="view-bahagian" class="content-view space-y-6 hidden">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -494,6 +605,9 @@
                         Jumlah: <strong>14 Bahagian & Unit</strong>
                     </div>
                 </div>
+
+                <!-- BANNER RUANG KERJA KHAS WAKIL BAHAGIAN YANG LOG MASUK -->
+                <div id="deptWorkspaceBanner" class="hidden"></div>
 
                 <!-- 14 Departments Card Grid (Styled cleanly like the prompt images) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="officialUnitsGrid">
@@ -1010,28 +1124,93 @@
                 userName: `Pegawai ${deptObj.short}`
             };
 
+            // Selaraskan penapis dropdown global & KPI terus ke bahagian ini
+            const globalFilter = document.getElementById('globalDeptFilter');
+            if (globalFilter) globalFilter.value = deptId;
+            const kpiFilter = document.getElementById('kpiDeptFilter');
+            if (kpiFilter) kpiFilter.value = deptId;
+
             closeModal('loginModal');
             renderAuthUI();
+            renderOfficialUnitsGrid();
             renderKpiTable();
-            showNotification(`Berjaya log masuk sebagai Pegawai ${deptObj.short}! Anda kini boleh menambah & mengurus KPI bahagian anda.`);
+
+            // DIRECT TERUS KE RUANG KERJA KHAS BAHAGIAN INI (TANPA PERLU TEKAN APA-APA LAGI)
+            openDeptPortal(deptId);
+
+            showNotification(`Selamat Datang! Anda telah terus dimasukkan ke Ruang Kerja ${deptObj.short}.`);
         }
 
         /**
-         * Handle Login as System Administrator
+         * Function to open and render the Direct Department Portal
          */
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            authState = {
-                role: 'admin',
-                deptId: null,
-                deptName: 'Pentadbir Sistem',
-                userName: 'Pentadbir Sistem PSUKPP'
-            };
+        function openDeptPortal(deptId) {
+            const deptObj = officialDepartments.find(d => d.id === deptId);
+            if (!deptObj) return;
 
-            closeModal('loginModal');
-            renderAuthUI();
-            renderKpiTable();
-            showNotification("Berjaya log masuk sebagai Pentadbir Sistem! Akses penuh dibuka untuk kesemua 14 Bahagian.");
+            document.getElementById('portalDeptFullName').innerText = deptObj.name;
+
+            // Tapis HANYA KPI bahagian ini sahaja
+            const deptKpis = state.kpis.filter(k => k.dept === deptId);
+            const total = deptKpis.length;
+            const success = deptKpis.filter(k => k.status === 'Mencapai').length;
+            const warning = deptKpis.filter(k => k.status === 'Perhatian').length;
+            const danger = deptKpis.filter(k => k.status === 'Kritikal').length;
+
+            const avgScore = total > 0 ? (deptKpis.reduce((acc, k) => acc + (k.calcScore || 0), 0) / total).toFixed(1) : deptObj.score;
+
+            document.getElementById('portalDeptScoreText').innerText = `${avgScore}%`;
+            document.getElementById('portalStatTotal').innerText = total;
+            document.getElementById('portalStatSuccess').innerText = success;
+            document.getElementById('portalStatWarning').innerText = warning;
+            document.getElementById('portalStatDanger').innerText = danger;
+
+            const tbody = document.getElementById('portalKpiTableBody');
+            if (tbody) {
+                if (deptKpis.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="p-8 text-center text-slate-400">
+                                <i class="fa-solid fa-folder-open text-2xl text-slate-300 mb-2 block"></i>
+                                Belum ada rekod KPI didaftarkan untuk bahagian ini.<br>
+                                <button onclick="checkAuthBeforeAddKpi()" class="mt-2 text-penang-primary font-bold hover:underline">
+                                    + Tambah KPI Pertama Sekarang
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tbody.innerHTML = deptKpis.map(k => {
+                        let badgeClass = 'bg-emerald-100 text-emerald-800';
+                        if (k.status === 'Perhatian') badgeClass = 'bg-amber-100 text-amber-800';
+                        if (k.status === 'Kritikal') badgeClass = 'bg-rose-100 text-rose-800';
+
+                        return `
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3 text-center font-bold text-penang-primary">${k.code}</td>
+                                <td class="p-3 font-semibold text-slate-900">${k.name}</td>
+                                <td class="p-3 text-center text-slate-500 font-medium">${k.unit}</td>
+                                <td class="p-3 text-right text-slate-600 font-medium">${k.target}</td>
+                                <td class="p-3 text-right font-bold text-slate-900">${k.actual}</td>
+                                <td class="p-3 text-center font-extrabold text-slate-900">${k.calcScore}%</td>
+                                <td class="p-3 text-center">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClass}">
+                                        ${k.status}
+                                    </span>
+                                </td>
+                                <td class="p-3 text-center">
+                                    <button onclick="deleteKpi('${k.id}')" class="text-slate-400 hover:text-rose-600 p-1.5 transition" title="Padam Rekod Ini">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // Kemas kini Navigasi ke view-dept-portal
+            navigateToView('dept-portal');
         }
 
         /**
@@ -1044,8 +1223,21 @@
                 deptName: null,
                 userName: 'Pengguna Tanpa Akaun (Awam)'
             };
+
+            // Reset penapis semula ke SEMUA
+            const globalFilter = document.getElementById('globalDeptFilter');
+            if (globalFilter) globalFilter.value = 'ALL';
+            const kpiFilter = document.getElementById('kpiDeptFilter');
+            if (kpiFilter) kpiFilter.value = 'ALL';
+
+            // Bersihkan pautan portal bahagian di sidebar
+            const slot = document.getElementById('sidebarDeptPortalSlot');
+            if (slot) slot.innerHTML = '';
+
             renderAuthUI();
+            renderOfficialUnitsGrid();
             renderKpiTable();
+            navigateToView('dashboard');
             showNotification("Anda telah log keluar. Sistem kembali kepada Mod Paparan Awam (Lihat Sahaja).", "warning");
         }
 
@@ -1054,9 +1246,11 @@
          */
         function renderAuthUI() {
             const container = document.getElementById('authHeaderContainer');
+            const portalSlot = document.getElementById('sidebarDeptPortalSlot');
             if (!container) return;
 
             if (authState.role === 'guest') {
+                if (portalSlot) portalSlot.innerHTML = '';
                 container.innerHTML = `
                     <div class="flex items-center gap-1.5">
                         <span class="text-[10px] bg-white/10 text-slate-200 border border-white/20 px-2 py-1 rounded font-medium hidden sm:inline-flex items-center gap-1">
@@ -1071,6 +1265,7 @@
                     </div>
                 `;
             } else if (authState.role === 'admin') {
+                if (portalSlot) portalSlot.innerHTML = '';
                 container.innerHTML = `
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 text-xs font-black shadow-xs">
@@ -1082,11 +1277,22 @@
                     </div>
                 `;
             } else if (authState.role === 'dept') {
+                // Sediakan butang khas paling atas dalam sidebar untuk direct masuk bila-bila masa
+                if (portalSlot) {
+                    portalSlot.innerHTML = `
+                        <button onclick="openDeptPortal('${authState.deptId}')" data-target="dept-portal" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-black bg-amber-500 text-slate-950 shadow-md mb-2 hover:bg-amber-400 transition">
+                            <i class="fa-solid fa-building-circle-check w-4 text-center text-slate-950"></i>
+                            <span class="flex-1 text-left truncate">Ruang Kerja ${authState.deptName}</span>
+                            <span class="text-[9px] bg-slate-950 text-amber-300 px-1.5 py-0.5 rounded font-extrabold">ANDA</span>
+                        </button>
+                    `;
+                }
+
                 container.innerHTML = `
                     <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500 text-white text-xs font-bold shadow-xs">
-                            <i class="fa-solid fa-building"></i> ${authState.deptName}
-                        </span>
+                        <button onclick="openDeptPortal('${authState.deptId}')" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold shadow-xs cursor-pointer" title="Tekan untuk buka Ruang Kerja Anda">
+                            <i class="fa-solid fa-building"></i> ${authState.deptName} (Buka Ruang Kerja)
+                        </button>
                         <button onclick="handleLogout()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-semibold transition" title="Log Keluar">
                             <i class="fa-solid fa-power-off"></i> <span class="hidden sm:inline">Keluar</span>
                         </button>
@@ -1204,19 +1410,62 @@
 
         function renderOfficialUnitsGrid() {
             const container = document.getElementById('officialUnitsGrid');
+            const bannerContainer = document.getElementById('deptWorkspaceBanner');
             if (!container) return;
 
+            // Paparkan Banner Khas Ruang Kerja Bahagian jika log masuk sebagai pegawai bahagian
+            if (bannerContainer) {
+                if (authState.role === 'dept') {
+                    const currentDept = state.departments.find(d => d.id === authState.deptId);
+                    bannerContainer.innerHTML = `
+                        <div class="bg-gradient-to-r from-penang-blue via-[#0B4F8A] to-slate-900 rounded-2xl p-5 text-white shadow-lg border-2 border-penang-accent flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div class="flex items-center gap-4 text-center md:text-left">
+                                <div class="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center border border-penang-accent/50 text-2xl text-amber-400 flex-shrink-0">
+                                    <i class="fa-solid fa-building-circle-check"></i>
+                                </div>
+                                <div>
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-penang-accent text-slate-950 font-black text-[10px] uppercase">
+                                        <i class="fa-solid fa-user-check"></i> Ruang Kerja Rasmi Anda
+                                    </div>
+                                    <h3 class="text-base sm:text-lg font-black text-white mt-1">${currentDept ? currentDept.name : authState.deptName}</h3>
+                                    <p class="text-xs text-blue-100">
+                                        Prestasi Semasa: <strong class="text-amber-300">${currentDept ? currentDept.score : 0}%</strong> • 
+                                        <span class="text-emerald-300 font-bold">${currentDept ? currentDept.kpiCount : 0} Indikator KPI Dipantau</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="checkAuthBeforeAddKpi()" class="bg-penang-accent hover:bg-amber-400 text-slate-950 text-xs font-black px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Tambah KPI ${authState.deptName}
+                                </button>
+                                <button onclick="filterBySpecificDept('${authState.deptId}')" class="bg-white/15 hover:bg-white/25 text-white border border-white/25 text-xs font-bold px-3 py-2 rounded-lg transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-chart-line"></i> Senarai KPI Bahagian &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    bannerContainer.classList.remove('hidden');
+                } else {
+                    bannerContainer.innerHTML = '';
+                    bannerContainer.classList.add('hidden');
+                }
+            }
+
             container.innerHTML = state.departments.map((dept, index) => {
+                const isUserDept = authState.role === 'dept' && authState.deptId === dept.id;
                 return `
-                    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs hover:border-penang-primary hover:shadow-md transition flex flex-col justify-between group">
+                    <div id="dept-card-${dept.id}" class="bg-white rounded-xl p-4 border ${isUserDept ? 'border-2 border-penang-accent bg-amber-50/20 shadow-md ring-2 ring-penang-accent/25' : 'border-slate-200'} shadow-xs hover:border-penang-primary hover:shadow-md transition flex flex-col justify-between group">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="w-6 h-6 rounded-full bg-slate-100 group-hover:bg-amber-100 text-slate-700 group-hover:text-amber-900 font-extrabold text-[10px] flex items-center justify-center border border-slate-200">
                                     ${index + 1}
                                 </span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${dept.score >= 90 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                                    ${dept.score}%
-                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    ${isUserDept ? '<span class="px-2 py-0.5 rounded text-[9px] font-black bg-amber-400 text-slate-950 uppercase tracking-wider"><i class="fa-solid fa-star mr-1"></i>Bahagian Anda</span>' : ''}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${dept.score >= 90 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                        ${dept.score}%
+                                    </span>
+                                </div>
                             </div>
 
                             <!-- Gambar Jata Penang: Bersaiz Besar & Jelas (Mengikut Rujukan Rasmi) -->
@@ -1422,6 +1671,7 @@
 
             const breadcrumbMap = {
                 'dashboard': 'Dashboard Utama',
+                'dept-portal': authState.deptName ? `Ruang Kerja ${authState.deptName}` : 'Ruang Kerja Bahagian',
                 'bahagian': '14 Bahagian & Unit PSUKPP',
                 'halatuju': 'Hala Tuju Strategik',
                 'teras': 'Teras Strategik',
@@ -1493,6 +1743,12 @@
             renderKpiTable();
             renderUrgentKPIs();
             renderOfficialUnitsGrid();
+
+            // Jika sedang berada dalam portal bahagian, muat semula paparan portal bahagian tersebut
+            if (authState.role === 'dept' && authState.deptId === dept) {
+                openDeptPortal(dept);
+            }
+
             showNotification(`KPI ${code} bagi ${dept} berjaya direkodkan oleh ${authState.userName}!`);
         }
 
@@ -1516,6 +1772,12 @@
             state.kpis = state.kpis.filter(k => k.id !== id);
             renderKpiTable();
             renderUrgentKPIs();
+
+            // Jika dalam portal bahagian, kemas kini terus paparan
+            if (authState.role === 'dept') {
+                openDeptPortal(authState.deptId);
+            }
+
             showNotification(`Rekod KPI ${item.code} telah berjaya dipadam.`);
         }
 
