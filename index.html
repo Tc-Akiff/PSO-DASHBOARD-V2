@@ -81,31 +81,38 @@
                     <i class="fa-solid fa-bars text-lg"></i>
                 </button>
                 
-                <div class="flex items-center gap-3">
-                    <!-- LOGO JATA PULAU PINANG: PENUH 100% TANPA TERPOTONG -->
-                    <div class="h-14 w-11 flex items-center justify-center flex-shrink-0 relative overflow-visible">
+                <div class="flex items-center gap-3.5">
+                    <!-- LOGO JATA PULAU PINANG: BERSAIZ BESAR, JELAS & 100% PENUH TANPA TERPOTONG -->
+                    <div class="h-16 sm:h-20 w-14 sm:w-16 flex items-center justify-center flex-shrink-0 relative py-0.5">
                         <img src="jata.png" 
                              alt="Jata Negeri Pulau Pinang" 
-                             class="h-full w-full object-contain scale-[1.15] drop-shadow-md transition-transform"
+                             class="h-full w-auto max-w-full object-contain drop-shadow-lg transition-transform hover:scale-105 duration-200"
                              onerror="this.style.display='none'; document.getElementById('topbarFallbackSvg').classList.remove('hidden');" />
-                        <svg id="topbarFallbackSvg" viewBox="0 0 100 120" class="w-full h-full drop-shadow-md hidden" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Shield Outline -->
-                            <path d="M50 3 C80 3, 97 18, 97 45 C97 88, 50 115, 50 115 C50 115, 3 88, 3 45 C3 18, 20 3, 50 3 Z" fill="#0B4F8A" stroke="#C59B27" stroke-width="3"/>
-                            <!-- Shield Top Yellow Field -->
-                            <path d="M7 45 C7 20, 22 7, 50 7 C78 7, 93 20, 93 45 L7 45 Z" fill="#FACC15"/>
-                            <!-- Penang Bridge Cables Graphic -->
-                            <path d="M50 14 V45" stroke="#1E293B" stroke-width="3.5"/>
-                            <path d="M22 45 L50 20 L78 45" stroke="#1E293B" stroke-width="3"/>
-                            <path d="M32 45 L50 26 L68 45" stroke="#0B4F8A" stroke-width="2"/>
-                            <!-- Shield Bottom Sea Waves (Blue & White Stripes) -->
-                            <path d="M7 45 C7 82, 50 111, 50 111 C50 111, 93 82, 93 45 Z" fill="#0284C7"/>
-                            <path d="M12 55 Q30 50, 50 55 T88 55" stroke="#FFFFFF" stroke-width="4.5" fill="none"/>
-                            <path d="M16 68 Q32 63, 50 68 T84 68" stroke="#FFFFFF" stroke-width="4.5" fill="none"/>
-                            <path d="M22 81 Q35 76, 50 81 T78 81" stroke="#FFFFFF" stroke-width="4.5" fill="none"/>
-                            <path d="M30 94 Q40 90, 50 94 T70 94" stroke="#FFFFFF" stroke-width="4" fill="none"/>
-                            <!-- Betel Nut Palm Crest Top (Pokok Pinang) -->
-                            <path d="M50 2 C50 2, 49 -10, 50 -12" stroke="#451A03" stroke-width="2"/>
-                            <circle cx="50" cy="8" r="4" fill="#15803D"/>
+                        <svg id="topbarFallbackSvg" viewBox="0 0 100 135" class="w-full h-full drop-shadow-lg hidden" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Pokok Pinang (Crest Top) -->
+                            <path d="M50 4 V32" stroke="#451A03" stroke-width="2.5"/>
+                            <ellipse cx="50" cy="8" rx="14" ry="5" fill="#15803D"/>
+                            <ellipse cx="50" cy="11" rx="11" ry="4" fill="#16A34A"/>
+                            <circle cx="50" cy="5" r="4.5" fill="#14532D"/>
+                            <!-- Pulau / Rumput Asas Pokok -->
+                            <ellipse cx="50" cy="32" rx="16" ry="4" fill="#047857"/>
+                            <ellipse cx="50" cy="34" rx="18" ry="3" fill="#0284C7"/>
+                            <!-- Perisai (Shield Outline & Background) -->
+                            <path d="M50 35 C82 35, 96 48, 96 72 C96 108, 50 124, 50 124 C50 124, 4 108, 4 72 C4 48, 18 35, 50 35 Z" fill="#0B4F8A" stroke="#C59B27" stroke-width="3"/>
+                            <!-- Medan Atas Kuning (Bridge Field) -->
+                            <path d="M7 72 C7 50, 20 38, 50 38 C80 38, 93 50, 93 72 L7 72 Z" fill="#FACC15"/>
+                            <!-- Jambatan Pulau Pinang -->
+                            <path d="M50 44 V72" stroke="#1E293B" stroke-width="3"/>
+                            <path d="M22 72 L50 48 L78 72" stroke="#1E293B" stroke-width="2.5"/>
+                            <path d="M32 72 L50 54 L68 72" stroke="#0B4F8A" stroke-width="2"/>
+                            <!-- Gelombang Laut (Blue & White Waves) -->
+                            <path d="M7 72 C7 102, 50 121, 50 121 C50 121, 93 102, 93 72 Z" fill="#0284C7"/>
+                            <path d="M12 80 Q30 75, 50 80 T88 80" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
+                            <path d="M16 91 Q32 86, 50 91 T84 91" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
+                            <path d="M22 102 Q35 97, 50 102 T78 102" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
+                            <path d="M32 112 Q40 108, 50 112 T68 112" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+                            <!-- Cogan Kata / Reben (Ribbon: BERSATU DAN SETIA) -->
+                            <path d="M20 126 Q50 134 80 126 L84 133 Q50 141 16 133 Z" fill="#FACC15" stroke="#C59B27" stroke-width="1.5"/>
                         </svg>
                     </div>
 
@@ -1212,25 +1219,31 @@
                                 </span>
                             </div>
 
-                            <!-- Gambar Jata Penang: Penuh Tanpa Terpotong -->
-                            <div class="w-14 h-16 mx-auto flex items-center justify-center overflow-visible relative">
+                            <!-- Gambar Jata Penang: Bersaiz Besar & Jelas (Mengikut Rujukan Rasmi) -->
+                            <div class="h-24 sm:h-28 w-full flex items-center justify-center my-1 relative">
                                 <img src="jata.png" 
                                      alt="Jata Pulau Pinang" 
-                                     class="w-full h-full object-contain scale-[1.15] drop-shadow-xs"
+                                     class="h-full w-auto max-h-24 sm:max-h-28 object-contain drop-shadow-md transition-transform group-hover:scale-105 duration-200"
                                      onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                                <svg viewBox="0 0 100 120" class="w-full h-full drop-shadow-xs hidden" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M50 3 C80 3, 97 18, 97 45 C97 88, 50 115, 50 115 C50 115, 3 88, 3 45 C3 18, 20 3, 50 3 Z" fill="#0B4F8A" stroke="#C59B27" stroke-width="4"/>
-                                    <path d="M7 45 C7 20, 22 7, 50 7 C78 7, 93 20, 93 45 L7 45 Z" fill="#FACC15"/>
-                                    <path d="M50 14 V45" stroke="#1E293B" stroke-width="3"/>
-                                    <path d="M22 45 L50 20 L78 45" stroke="#1E293B" stroke-width="3"/>
-                                    <path d="M7 45 C7 82, 50 111, 50 111 C50 111, 93 82, 93 45 Z" fill="#0284C7"/>
-                                    <path d="M12 58 Q30 52, 50 58 T88 58" stroke="#FFFFFF" stroke-width="4" fill="none"/>
-                                    <path d="M18 72 Q35 66, 50 72 T82 72" stroke="#FFFFFF" stroke-width="4" fill="none"/>
+                                <svg viewBox="0 0 100 135" class="h-full w-auto max-h-24 sm:max-h-28 drop-shadow-md hidden" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M50 4 V32" stroke="#451A03" stroke-width="2.5"/>
+                                    <ellipse cx="50" cy="8" rx="14" ry="5" fill="#15803D"/>
+                                    <ellipse cx="50" cy="11" rx="11" ry="4" fill="#16A34A"/>
+                                    <circle cx="50" cy="5" r="4.5" fill="#14532D"/>
+                                    <ellipse cx="50" cy="32" rx="16" ry="4" fill="#047857"/>
+                                    <path d="M50 35 C82 35, 96 48, 96 72 C96 108, 50 124, 50 124 C50 124, 4 108, 4 72 C4 48, 18 35, 50 35 Z" fill="#0B4F8A" stroke="#C59B27" stroke-width="3"/>
+                                    <path d="M7 72 C7 50, 20 38, 50 38 C80 38, 93 50, 93 72 L7 72 Z" fill="#FACC15"/>
+                                    <path d="M50 44 V72" stroke="#1E293B" stroke-width="3"/>
+                                    <path d="M22 72 L50 48 L78 72" stroke="#1E293B" stroke-width="2.5"/>
+                                    <path d="M7 72 C7 102, 50 121, 50 121 C50 121, 93 102, 93 72 Z" fill="#0284C7"/>
+                                    <path d="M12 80 Q30 75, 50 80 T88 80" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
+                                    <path d="M16 91 Q32 86, 50 91 T84 91" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
+                                    <path d="M22 102 Q35 97, 50 102 T78 102" stroke="#FFFFFF" stroke-width="3.5" fill="none"/>
                                 </svg>
                             </div>
 
                             <div class="text-center">
-                                <h3 class="font-extrabold text-slate-800 text-xs leading-snug group-hover:text-penang-primary transition">
+                                <h3 class="font-extrabold text-slate-800 text-xs leading-snug group-hover:text-penang-primary transition min-h-[32px] flex items-center justify-center">
                                     ${dept.name}
                                 </h3>
                             </div>
